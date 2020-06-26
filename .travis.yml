@@ -34,7 +34,7 @@ before_script:
   - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
 
 script:
-  - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+  - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
 jobs:
   include:
@@ -286,7 +286,29 @@ jobs:
       script:
         - vendor/bin/validate-prefer-lowest
         - composer show
-        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+        - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+
+    - name: Minimum versions on php7.3
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction
+        - composer require --dev dereuromark/composer-prefer-lowest
+      script:
+        - vendor/bin/validate-prefer-lowest
+        - composer show
+        - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+
+    - name: Minimum versions on php7.4
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction
+        - composer require --dev dereuromark/composer-prefer-lowest
+      script:
+        - vendor/bin/validate-prefer-lowest
+        - composer show
+        - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
   allow_failures:
     - php: nightly
